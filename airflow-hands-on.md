@@ -147,6 +147,7 @@ Two important parameters, when it comes to scheduling -
 3. The task is triggered when execution time is elapsed.
 	
 	@START: EXECUTION_TIME = START_TIME
+	
 	NEW_EXECUTION_TIME = PREVIOUS_EXECUTION_TIME + SCHEDULE_INTERVAL
 
 4. To resolve task fails, we pause the dag and check the logs for the failed task. Airflow helps to resolve to us as to what stage the task failed.
@@ -281,12 +282,103 @@ To set this parameter for 1 specific dag - pass is as a DAG object parameter.
 set to 1 and observe changes. Only 1 active running dag will be visible. this is useful when the next dag run is dependent on previous dag run. This can be dag specific, so pass in dag object parameter.
 
 --------
+**SubDAG's** - to group tasks and make DAG's clean
+
+create **subdags** folder under **dags** folder
+
+create a subdag function in the subdag file opoen in subdag folder. This subdag function is imported in main dag. The subdag function takes 3 arguments : parent dag id, child dag id and defaults arguments of parent dag. 
+
+The sub dag id should be `{parent_dag_id}.{child_dag_id}` always. And, at end of dag function return the dag object.
+
+While using the subdag function in parent dag specify the `child_dag_id` argument to task_id of the subdag
+
+**AVOID SUBDAGS in production**
+
+1. Subdag can introduce deadlocks.
+2. Complexity to set up subdag.
+3. In sub dag, the executor is always sequential.
+
+----------
+**TaskGroups**
+
+`from airflow.utils.task_group import TaskGroup`
+
+encapsulate the tasks to be group with the TaskGroup object with it's name. And Done!, Much simpler and better than subDAG also, no sequential executing.
+
+Also, TaskGroups can be encapsulated in other TaskGroups as SubTaskGroups.
+---------
+**Exchanging data between tasks**
+
+2 ways - 
+1. Using External tools - Database, or Amazon S3.
+2. Use XCOM - for cross communication - allows exchange of small amount of data.
+
+XCOM data is stored in meta-store database, so there are limits to amount of XCOM data that is stored. For  airflow metastore - 2GB for XCOM, and for postgres airflow metastore - 1GB data, with MySQL - only 64KB. 
+
+XCOMs can be directly pushed from the return statement of function. Another way is is using the statement `ti.xcom_push(key = 'key', value = 'value')` make sure `ti` is kept as argument to the function.
+
+To Pull XCOM use `ti.xcom_pull(key = 'key', task_ids= [tasks that pushed this XCOM])`
+
+Some operator will create XCOMs by default, we can set this behaviour off by setting in the DAG object the parameter - `do_xcom_push = False`
+
+Limit use of XCOM since there are memory constraints.
+
+----------
+**Choosing specific path in DAG**
+
+Use BranchPythonOperator - This is to add control flow in our DAG. It is like if-else statement.
+
+
+
+---------
+
+**Creating Airflow Plugin with Elasticsearch and Postgresql**
+
+**Elasticsearch Installation**
+Follow course chapter - 49
+
+Plugins will be created as python modules in airflow/plugins folder.
+
+We have to restart airflow everytime a plugin is added.
+
+**Creating plugins**
+
+Plugin -with hook interacting with elastic search and operator to transfer data from postgres to elastic search.
+
+
+**Creating hooks**
 
 
 
 
 
 
+
+------
+**Docker **
+
+With docker we don't need VM, docker is like VM but lightweight.
+
+1. Create a local airflow folder. and download the airflow docker-compose file. `wget https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml`
+
+The code of docker file is explained in chapter 55 - refer.
+
+2. Run the docker compose file with command 
+
+`docker-compose -f docker-compose.yaml up -d`
+
+By default docker is running celery executor to change to local executor we can modify the docker-composer.yaml file as given in chapter -56
+
+Make changes and run the docker-compose command again.
+
+airflow UI - still runs on localhost:8080 and without need to restart webserver or scheduler.
+
+All the services inside the application, can or cannot run on separate docker containers. To avoid single point of failure.
+
+`docker ps` command to check docker application status. Healthy meaning application services started successfully.
+
+`docker-compose down` to stop the up and running containers.
+-------
 
 
 

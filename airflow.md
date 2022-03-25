@@ -70,9 +70,6 @@ Running -
 
 3. Sensor - To wait and sense for data to arrive at defined location. They are long running operation.
 
-[Types of Operators - pdf](https://att-c.udemycdn.com/2020-01-21_14-50-16-0358b2195065f263c3cb612c1bc9c826/original.pdf?response-content-disposition=attachment%3B+filename%3DSection%2B3%2B-%2BWhat%2Bis%2Ban%2BOperator_.pdf&Expires=1648027579&Signature=lOoI3leqN0~bz9s-4JiJkqr9uG9n0LE3ZnNiACb-8U5ovpv~HVL4qnpEDIs9e~8de8Mgnb-vhiAVj6dyoMUx3GtAFvlYDdDP1F498s2E6iA8x4HjlSFiSz7B98B9ti8ayivaufngdM4PRBwTDXmRNOutyL~Xjd-mytwAnGJLhNQ8q3GP8MiwUeJ8BCNZ1ufO1Aw7lu1pid9RSxl8rEuQ6ZlqYuemF2CO6pvPa72VKcp1zhPRXvTHF8hY8RLtMd~zYGgBty32AAYMhxXITa7sx9iYB5-M7CLhR4M9OC9RG9MT53c4IUKgYURI7DPKpq0kNJsfeKmLLv3ZDz5LgyqWdw__&Key-Pair-Id=APKAITJV77WS5ZT7262A)
-
-
 ----------
 
 **Scheduling**
@@ -93,4 +90,12 @@ Start_date and schedule_interval are always needed
 Each machine/worker has a airflow instance running. We have to make sure all machines share the same dependencies. Same package dependency is required to be present in all machines.
 
 So, to use celery executor - we will have to add exeternal tools like Redis or RabbitQL.
+
+
+
+----------
+
+**How to make DAG clean**
+
+
 
